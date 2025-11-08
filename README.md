@@ -176,3 +176,4 @@ If you find Synex useful, please ⭐ the repo to support development!
 
 
 # Synex
+# Synex
