@@ -1,0 +1,81 @@
+# === Node.js / Next.js ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Next.js build output
+.next/
+out/
+build/
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# === Capacitor / Android ===
+android/
+ios/
+capacitor.config.ts
+capacitor.settings.json
+*.keystore
+*.jks
+
+# Android Studio / Gradle
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/captures/
+android/gradle/
+android/gradlew
+android/gradlew.bat
+
+# iOS (if added later)
+ios/App/Pods/
+ios/App/Podfile.lock
+ios/build/
+
+# === Logs & Cache ===
+*.log
+*.tsbuildinfo
+.cache/
+.vercel/
+.netlify/
+
+# === Editor / OS ===
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# === Termux / Android ===
+/storage/
+termux.properties
+*.apk
+*.aab
+*.zip
+
+# === Misc ===
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+
+# === Security ===
+*.pem
+*.key
+*.crt
+*.cer
+upload.sh
