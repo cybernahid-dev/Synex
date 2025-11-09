@@ -1,0 +1,88 @@
+name: Build Synex APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:   # allow manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed for release upload
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install JS deps
+        run: npm ci
+
+      - name: Build static site
+        run: npm run build
+
+      - name: Install Capacitor CLI
+        run: npm i -D @capacitor/cli @capacitor/android
+
+      - name: Add Android platform
+        run: npx cap add android
+
+      - name: Sync web assets
+        run: npx cap sync android
+
+      # ── Java & Android SDK (official actions)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      # ── Build debug APK (fastest)
+      - name: Build Debug APK
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon
+
+      # ── Build signed release APK (optional, needs secret keystore)
+      # - name: Build Release APK
+      #   env:
+      #     KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+      #     KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
+      #     KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      #     KEY_PASS: ${{ secrets.KEY_PASS }}
+      #   run: |
+      #     echo "$KEYSTORE_B64" | base64 -d > android/app/my-release-key.keystore
+      #     cd android
+      #     ./gradlew assembleRelease --no-daemon
+
+      # ── Upload artifacts
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Synex-Debug-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      # - name: Upload Release APK
+      #   if: env.KEYSTORE_B64 != ''
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: Synex-Release-APK
+      #     path: android/app/build/outputs/apk/release/app-release.apk
+
+      # ── Create GitHub Release (optional)
+      # - name: Create Release
+      #   uses: softprops/action-gh-release@v2
+      #   with:
+      #     tag_name: v${{ github.run_number }}
+      #     name: Synex v${{ github.run_number }}
+      #     files: |
+      #       android/app/build/outputs/apk/debug/app-debug.apk
